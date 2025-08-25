@@ -3,4 +3,5 @@ package com.banking.transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionRepo extends JpaRepository<Transaction, Long> {
+    boolean existsByIdempotencyKey(String idempotencyKey);
 }

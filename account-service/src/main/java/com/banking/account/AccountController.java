@@ -13,7 +13,7 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<Account> createAccount(@RequestBody Account account) {
         return ResponseEntity.ok(accountService.createAccount(account));
     }
