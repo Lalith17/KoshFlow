@@ -30,27 +30,9 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @PutMapping("/{accountNumber}")
-    public ResponseEntity<Account> updateAccount(@PathVariable String accountNumber, @RequestBody Account account) {
-        return ResponseEntity.ok(accountService.updateAccount(accountNumber, account));
-    }
-
-    @DeleteMapping("/{accountNumber}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable String accountNumber) {
-        accountService.deleteAccount(accountNumber);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Account> getAccountByUserId(@PathVariable Long userId) {
-        return accountService.getAccountByUserId(userId)
-                .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Iterable<Account>> getAccountByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(accountService.getAccountByUserId(userId));
     }
 
-    @GetMapping("/check/{accountNumber}")
-    public ResponseEntity<AccountResponse> checkAccountExistsAndBalance(@PathVariable String accountNumber) {
-        AccountResponse response = accountService.checkAccountExistsAndBalance(accountNumber);
-        return ResponseEntity.ok(response);
-    }
 }
