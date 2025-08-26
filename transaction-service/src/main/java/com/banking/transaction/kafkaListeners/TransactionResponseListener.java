@@ -2,7 +2,6 @@ package com.banking.transaction.kafkaListeners;
 
 import com.banking.transaction.TransactionService;
 import com.banking.transaction.dto.TransactionCompletion;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -20,5 +19,4 @@ public class TransactionResponseListener {
         log.info("Received transaction response: {}", status.transactionId());
         transactionService.updateTransactionStatus(status);
     }
-
 }

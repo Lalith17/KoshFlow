@@ -67,6 +67,10 @@ public class AccountService {
             publishOutcome(transactionInitiated, false, "Insufficient balance");
             return;
         }
+        if(!sender.getUserId().equals(transactionInitiated.userId())){
+            publishOutcome(transactionInitiated, false, "Unauthorized transaction attempt on sender account");
+            return;
+        }
         sender.setBalance(sender.getBalance().subtract(transactionInitiated.amount()));
         receiver.setBalance(receiver.getBalance().add(transactionInitiated.amount()));
         accountRepo.save(sender);
@@ -79,6 +83,10 @@ public class AccountService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         if (sender.getBalance().compareTo(transactionInitiated.amount()) < 0) {
             publishOutcome(transactionInitiated, false, "Insufficient balance");
+            return;
+        }
+        if(!sender.getUserId().equals(transactionInitiated.userId())){
+            publishOutcome(transactionInitiated, false, "Unauthorized transaction attempt on sender account");
             return;
         }
         sender.setBalance(sender.getBalance().subtract(transactionInitiated.amount()));
@@ -95,7 +103,9 @@ public class AccountService {
     }
 
     private void publishOutcome(TransactionInitiated transactionInitiated, boolean success, String reason) {
-        TransactionCompletion transactionCompletion = new TransactionCompletion(transactionInitiated.transactionId(),
+        TransactionCompletion transactionCompletion = new TransactionCompletion(
+                transactionInitiated.transactionId(),
+                transactionInitiated.userId(),
                 transactionInitiated.type(),
                 success,
                 reason);

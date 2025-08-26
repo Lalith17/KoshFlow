@@ -1,6 +1,5 @@
 package com.banking.account;
 
-import com.banking.account.dto.AccountResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -38,6 +38,8 @@ public class TransactionService {
         else if(toId!=null){
             transaction.setType(TransactionType.DEPOSIT);
         }
+        transaction.setUserId(transactionRequest.userId());
+        transaction.setUserEmail(transactionRequest.userEmail());
         transaction.setFromId(transactionRequest.fromId());
         transaction.setToId(transactionRequest.toId());
         transaction.setAmount(transactionRequest.amount());
@@ -56,6 +58,7 @@ public class TransactionService {
         try{
             TransactionInitiated transactionInitiated =new TransactionInitiated(
                     transaction.getTransactionId(),
+                    transaction.getUserId(),
                     transaction.getFromId(),
                     transaction.getToId(),
                     transaction.getAmount(),
@@ -66,6 +69,9 @@ public class TransactionService {
         }
         catch (Exception e){
             logger.error("Failed to send transaction to Kafka", e);
+            transaction.setStatus(TransactionStatus.FAILED);
+            transactionRepo.save(transaction);
+            return "Transaction Failed";
         }
         return "Transaction Initiated";
     }

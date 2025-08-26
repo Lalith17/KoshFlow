@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 public record TransactionInitiated(
         Long transactionId,
+        Long userId,
         String fromId,
         String toId,
         BigDecimal amount,

@@ -24,6 +24,9 @@ public class TransactionController {
         if(transactionRequest.fromId()==null&& transactionRequest.toId()==null){
             return ResponseEntity.badRequest().body("Either fromId or toId is required");
         }
+        if(transactionRequest.userId()==null){
+            return ResponseEntity.badRequest().body("UserId is required");
+        }
         if(transactionRequest.amount().compareTo(BigDecimal.valueOf(0))<=0) return ResponseEntity.badRequest().body("Amount should be greater than zero");
         return ResponseEntity.ok(transactionService.initiateTransaction(transactionRequest));
     }

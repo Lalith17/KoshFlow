@@ -15,6 +15,8 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long transactionId;
+    private Long userId;
+    private String userEmail;
     private String fromId;
     private String toId;
     private BigDecimal amount;

@@ -1,11 +1,9 @@
-package com.banking.transaction.dto;
-
-import com.banking.transaction.enums.TransactionType;
+package com.banking.user.dto;
 
 public record TransactionCompletion(
         Long transactionId,
         Long userId,
-        TransactionType type,
+        String type,
         boolean success,
         String message
 ) {
