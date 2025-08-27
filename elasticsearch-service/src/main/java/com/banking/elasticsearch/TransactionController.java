@@ -1,32 +1,50 @@
 package com.banking.elasticsearch;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.banking.elasticsearch.enums.TransactionStatus;
+import com.banking.elasticsearch.enums.TransactionType;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/elasticsearch")
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final testing test;
 
-    public TransactionController(TransactionService transactionService, testing test) {
+    public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
-        this.test = test;
     }
 
-    @GetMapping("/userId")
+    @GetMapping("/user/{userId}")
     public Iterable<Transaction> getAllUserTransactions(@PathVariable Long userId) {
         return transactionService.getAllUserTransactions(userId);
     }
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public Iterable<Transaction> getAllTransactions() {
         return transactionService.getAllTransactions();
     }
 
-    @PostMapping("/testing")
-    public void createTransaction(@RequestBody Transaction transaction) {
-        test.sendTransaction(transaction);
+    @GetMapping("/recent/{userId}")
+    public Iterable<Transaction> getRecentTransactions(@PathVariable Long userId) {
+        return transactionService.getRecentTransactions(userId);
+    }
+
+    @GetMapping("/status")
+    public Iterable<Transaction> getTransactionsByStatus(@RequestParam TransactionStatus status) {
+        return transactionService.getTransactionsByStatus(status);
+    }
+
+    @GetMapping("/type")
+    public Iterable<Transaction> getTransactionsByType(@RequestParam TransactionType type) {
+        return transactionService.getTransactionsByType(type);
+    }
+
+    @GetMapping("/amount-range")
+    public Iterable<Transaction> getTransactionsByAmountRange(
+            @RequestParam BigDecimal min,
+            @RequestParam BigDecimal max) {
+        return transactionService.getTransactionsByAmountRange(min, max);
     }
 }
