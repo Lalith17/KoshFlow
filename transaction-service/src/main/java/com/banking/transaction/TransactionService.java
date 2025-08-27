@@ -11,18 +11,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Transactional
 @Service
 public class TransactionService {
     private final TransactionRepo transactionRepo;
     private final KafkaTemplate<String, TransactionInitiated> kafkaTemplate;
+    private final KafkaTemplate<String, Transaction> kafkaTemplate1;
     private static final Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
-    public TransactionService(TransactionRepo transactionRepo, KafkaTemplate<String, TransactionInitiated> kafkaTemplate) {
+    public TransactionService(TransactionRepo transactionRepo, KafkaTemplate<String, TransactionInitiated> kafkaTemplate, KafkaTemplate<String, Transaction> kafkaTemplate1) {
         this.transactionRepo = transactionRepo;
         this.kafkaTemplate = kafkaTemplate;
+        this.kafkaTemplate1 = kafkaTemplate1;
     }
 
     public Transaction saveTransaction(TransactionRequest transactionRequest) {
@@ -39,11 +41,10 @@ public class TransactionService {
             transaction.setType(TransactionType.DEPOSIT);
         }
         transaction.setUserId(transactionRequest.userId());
-        transaction.setUserEmail(transactionRequest.userEmail());
         transaction.setFromId(transactionRequest.fromId());
         transaction.setToId(transactionRequest.toId());
         transaction.setAmount(transactionRequest.amount());
-        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setTimestamp(Instant.now());
         transaction.setStatus(TransactionStatus.PENDING);
         transaction.setDescription(transactionRequest.description());
         transaction.setIdempotencyKey(transactionRequest.idempotencyKey());
@@ -85,5 +86,7 @@ public class TransactionService {
         if(status.success()) transaction.setStatus(TransactionStatus.COMPLETED);
         else transaction.setStatus(TransactionStatus.FAILED);
         transactionRepo.save(transaction);
+        kafkaTemplate1.send("elasticsearch.initiated", transaction);
+        logger.info("Transaction status sent for elastic search: {}", transaction.getTransactionId());
     }
 }

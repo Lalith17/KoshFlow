@@ -1,6 +1,6 @@
-package com.banking.user.dto;
+package com.banking.notification.dto;
 
-public record NotificationDto(
+public record TransactionCompletedNotification(
         String name,
         String email,
         Long transactionId,
