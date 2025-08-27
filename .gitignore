@@ -37,6 +37,5 @@ build/
 ### Mac OS ###
 .DS_Store
 
-/user-service
 run-all-services.bat
 /elasticsearch-service
