@@ -23,6 +23,7 @@
         <module>gateway-service</module>
         <module>notification-service</module>
         <module>elasticsearch-service</module>
+        <module>auth-service</module>
     </modules>
 
 </project>
