@@ -1,0 +1,109 @@
+version: '3.8'
+services:
+  registry-service:
+    build: ./registry-service
+    ports:
+      - "8761:8761"
+    networks:
+      - koshflow-net
+
+  gateway-service:
+    build: ./gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  account-service:
+    build: ./account-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8082:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8083:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  transaction-service:
+    build: ./transaction-service
+    ports:
+      - "8084:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8085:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  elasticsearch-service:
+    build: ./elasticsearch-service
+    ports:
+      - "8086:8080"
+    depends_on:
+      - registry-service
+    networks:
+      - koshflow-net
+
+  elasticsearch:
+    image: elasticsearch:9.1.2
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    networks:
+      - koshflow-net
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+    networks:
+      - koshflow-net
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - koshflow-net
+
+networks:
+  koshflow-net:
+    driver: bridge
